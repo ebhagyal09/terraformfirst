@@ -1,51 +1,44 @@
-resource "aws_security_group" "rds" {
-  name = "${format("%s-rds-sg", var.name)}"
+# creating RDS in aws 
+resource "aws_db_instance" "assignment_mysql" {
+  allocated_storage    = 20
+  max_allocation_storage = 100
+  storage_type         = "gp2"
+  engine               = "mysql"
+  engine_version       = "5.7"
+  instance_class       = "db.t2.micro"
+  name                 = "mydb"
+  username             = "*********"
+  password             = "*********"
+  parameter_group_name = "default.mysql5.7"
+}
+#creating securitygroup 
 
-  vpc_id = "${module.vpc.vpc_id}"
+resource "aws_security_group" "db_22" {
+  name   = "db_22"
+  Description = "Allow inbound SSH traffic from my ip"
+   vpc_id = "${aws_vpc.assignment_vpc.id}"
 
   ingress {
-    from_port   = "${var.db_port}"
-    to_port     = "${var.db_port}"
+    from_port   = 22
+    to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["${module.vpc.private_subnets_cidr_blocks}"]
+    cidr_blocks = ["0.0.0.0/0"]
   }
-
+  
   tags {
-    Group = "${var.name}"
+  Name = "Allow SSH"
   }
-
-}
-
-module "rds" {
-  source = "terraform-aws-modules/rds/aws"
-
-  identifier = "${var.db_identifier}"
-
-  engine            = "postgres"
-  engine_version    = "9.6.3"
-  instance_class    = "db.t2.micro"
-  allocated_storage = "${var.db_allocated_storage}"
-
-  name = "${var.db_name}"
-  username = "${var.db_username}"
-  password = "${var.db_password}"
-  port     = "${var.db_port}"
-
-  vpc_security_group_ids = ["${aws_security_group.rds.id}"]
-
-  maintenance_window = "${var.db_maintenance_window}"
-  backup_window      = "${var.db_backup_window}"
-
-  # disable backups to create DB faster
-  backup_retention_period = "${var.db_backup_retention_period}"
-
-  subnet_ids = ["${module.vpc.database_subnets}"]
-
-  family = "postgres9.6"
-
-  tags {
-    Group = "${var.name}"
+ }
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
-
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 }
-
