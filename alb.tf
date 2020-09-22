@@ -71,7 +71,7 @@ resource "aws_lb_listener" "backend" {
 
 resource "aws_alb_target_group" "alb_backend_tg" {
 	name	= "alb-backend"
-	vpc_id	= "${aws_vpc.3tierarchivpc.id}"
+	vpc_id	= "${aws_vpc.assignment_vpc.id}"
 	port	= "80"
 	protocol	= "HTTP"
 	health_check {

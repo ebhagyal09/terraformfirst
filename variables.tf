@@ -1,5 +1,5 @@
 variable "aws_region" {
-  default = "us-east-1"
+  default = "us-east-2"
 }
 
 variable "aws_profile" {
@@ -24,5 +24,5 @@ variable "private_subnet_cidr" {
 }
 variable "availability_zone" {
   type    = list(string)
-  default = ["us-east-1a","us-east-1e"]
+  default = ["us-east-2a","us-east-2b"]
 }

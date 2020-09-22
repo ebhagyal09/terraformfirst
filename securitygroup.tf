@@ -4,7 +4,7 @@
 resource "aws_security_group" "sg_22" {
   name   = "sg_22"
   Description = "Allow inbound SSH traffic from my ip"
-   vpc_id = "${aws_vpc.3tierarchivpc.id}"
+   vpc_id = "${aws_vpc.assignment_vpc.id}"
 
   ingress {
     from_port   = 22
