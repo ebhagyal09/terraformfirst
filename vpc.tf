@@ -1,23 +1,24 @@
-[200~provider "aws" {
-  region     = "us-east-2"
-  access_key = "AKIA3OMUFFP2IVJSXRSN"
-  secret_key = "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"
+#configure aws provider
+provider "aws" {
+  shared_credentials_file = "~/.aws/credentials"
+  region                  = "${var.aws_region}"
+  profile                 = "${var.aws_profile}"
 }
 #create vpc for 3 tier architecture design 
 
-resource "aws_vpc" "3tierarchivpc" {
+resource "aws_vpc" "assignment_vpc" {
   cidr_block = "10.0.0.0/16"
   enable_dns_hostnames = true
   enable_dns_support = true 
 
   tags = {
-  Name = "3tierarchivpc"
+  Name = "assignment_vpc"
   }
  }
  
  #creating internet gateway and attaching to vpc  3tierarchi
 resource "aws_internet_gateway" "igw"{
-  vpc_id = "${aws_vpc.3tierarchivpc.id}"
+  vpc_id = "${aws_vpc.assignment_vpc.id}"
 
   tags = {
   Name = "igw"
@@ -27,7 +28,7 @@ resource "aws_internet_gateway" "igw"{
 
 # Creation of public subnets
 resource "aws_subnet" "public1" {
-  vpc_id   = "${aws_vpc.3tierarchivpc.id}"
+  vpc_id   = "${aws_vpc.assignment_vpc.id}"
   cidr_block = "10.0.1.0/24"
     availability_zone = "us-east-2a"
 	map_public_ip_on_launch = "true"
@@ -38,7 +39,7 @@ resource "aws_subnet" "public1" {
  }
  
  resource "aws_subnet" "public2" {
-  vpc_id   = "${aws_vpc.3tierarchivpc.id}"
+  vpc_id   = "${aws_vpc.assignment_vpc.id}"
   cidr_block = "10.0.2.0/24"
     availability_zone = "us-east-2b"
 	map_public_ip_on_launch = "true"
@@ -50,7 +51,7 @@ resource "aws_subnet" "public1" {
  #creation of route table
  
  resource "aws_route_table" "public1" {
-    vpc_id = "${aws_vpc.3tierarchivpc.id}"
+    vpc_id = "${aws_vpc.assignment_vpc.id}"
     route {
         cidr_block = "0.0.0.0/0"
         gateway_id = "${aws_internet_gateway.igw.id}"
@@ -73,7 +74,7 @@ resource "aws_route_table_association" "public2" {
  # creating private subnets 
  
 	resource "aws_subnet" "private1" {
-  vpc_id   = "${aws_vpc.3tierarchivpc.id}"
+  vpc_id   = "${aws_vpc.assignment_vpc.id}"
   cidr_block = "10.0.3.0/24"
     availability_zone = "us-east-2a"
 	map_public_ip_on_launch = "true"
@@ -84,7 +85,7 @@ resource "aws_route_table_association" "public2" {
  }
  
  resource "aws_subnet" "private2" {
-  vpc_id   = "${aws_vpc.3tierarchivpc.id}"
+  vpc_id   = "${aws_vpc.assignment_vpc.id}"
   cidr_block = "10.0.4.0/24"
     availability_zone = "us-east-2b"
 	map_public_ip_on_launch = "true"
@@ -97,7 +98,7 @@ resource "aws_route_table_association" "public2" {
  # creating route table for private subnet 
  
  resource "aws_route_table" "private1" {
-    vpc_id = "${aws_vpc.3tierarchivpc.id}"
+    vpc_id = "${aws_vpc.assignment_vpc.id}"
     
     route {
         cidr_block     = "0.0.0.0/0"
