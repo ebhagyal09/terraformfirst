@@ -7,7 +7,7 @@ resource "aws_lb" "front_end" {
   enable_deletion_protection = false
 
   tags = {
-    Environment = "production"
+    Environment = "Test"
   }
 }
 resource "aws_lb_listener" "front_end" {

@@ -11,6 +11,17 @@ resource "aws_db_instance" "assignment_mysql" {
   password             = "*********"
   parameter_group_name = "default.mysql5.7"
 }
+
+# Attaching private subnet to db instance 
+
+resource "aws_db_subnet_group" "db_vpc" {
+  name       = "main"
+  subnet_ids = [aws_subnet.private1.id, aws_subnet.private2.id]
+
+  tags = {
+    Name = "My DB subnet group"
+  }
+}
 #creating securitygroup 
 
 resource "aws_security_group" "db_22" {
